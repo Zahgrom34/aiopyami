@@ -2,6 +2,7 @@ import asyncio
 import socket
 
 from asyncio import Transport
+from typing import List
 from src.formats import Action
 from src.internal import InternalHandler
 
@@ -53,14 +54,27 @@ class Client(asyncio.Protocol):
         except socket.error as se:
             raise ConnectionError(f"Failed to connect to Asterisk AMI: {se}")
 
+
+    async def subscribe_to_events(self, event_types: List[str]):
+        """
+        Subscribes to events which will 
+        """
+        action = Action("Events", {
+            "EventMask": ",".join(event_types),
+        })
+
+        await self.__manager.send_action(action, "EVENTS01")
+
     
     def connection_made(self, transport: Transport) -> None:
+        print("Connection made successfully")
         self.transport = transport
 
     
     def data_received(self, data: bytes) -> None:
+        print("Data received...")
         response = data.decode()
-        self.queue.put_nowait(response)
+        print(response)
 
         if "ActionID" in response:
             asyncio.create_task(self.__manager._dispatch_action(response))

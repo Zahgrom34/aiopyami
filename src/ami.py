@@ -1,7 +1,7 @@
 import asyncio
 import uuid
 
-from typing import Callable, Coroutine, Dict, Optional
+from typing import Callable, Optional
 from src.exceptions import NoConnectionMade
 from src.formats import Action
 from src.utils import dump_data
@@ -9,7 +9,7 @@ from src.utils import dump_data
 class AsteriskManager:
     def __init__(self, _client: object) -> None:
         self.__client = _client
-        self._action_callbacks: Dict[str, asyncio.Task | Coroutine] = {}
+        self._action_callbacks = {}
     
     async def send_action_callback(self, action: Action, callback: Callable[[dict], None], /, callback_timeout: float = 30000, action_id: Optional[str] = None) -> None:
         """
@@ -65,13 +65,17 @@ class AsteriskManager:
 
 
     async def _dispatch_action(self, response: str):
-        event_data = dump_data(response)
-        action_id = event_data.get("ActionID")
-        callback = self._action_callbacks.get(action_id)
-        if callback:
-            del self._action_callbacks[action_id]  # Remove the callback once executed
-            if action_id + '_timeout_task' in self._action_callbacks:
-                self._action_callbacks[action_id + '_timeout_task'].cancel()
-                del self._action_callbacks[action_id + '_timeout_task']
-            
-            asyncio.create_task(callback(event_data))
+        try:
+            event_data = dump_data(response)
+            action_id = event_data.get("ActionID")
+            callback = self._action_callbacks.get(action_id)
+            if callback:
+                del self._action_callbacks[action_id]  # Remove the callback once executed
+                if action_id + '_timeout_task' in self._action_callbacks:
+                    self._action_callbacks[action_id + '_timeout_task'].cancel()
+                    del self._action_callbacks[action_id + '_timeout_task']
+                
+                await callback(event_data)
+        
+        except Exception as e:
+            print(e)
