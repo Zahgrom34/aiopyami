@@ -22,6 +22,7 @@ class Client(asyncio.Protocol):
         self.ami_socket = None
         self.queue = asyncio.Queue()
         self.transport = None
+        self.loop = None
         self.__manager = AsteriskManager(self)
     
 
@@ -35,6 +36,10 @@ class Client(asyncio.Protocol):
         """
         try:
             loop = asyncio.get_running_loop()
+            
+            # Assign current loop to class instance parameter
+            self.loop = loop
+
             # Connect to ami client
             self.ami_socket = await loop.create_connection(lambda: self, self.host, self.port)
             
@@ -43,8 +48,13 @@ class Client(asyncio.Protocol):
                 "Username": login,
                 "Secret": password
             })
-            await self.__manager.send_action_callback(login_cmd, InternalHandler.asterisk_authenticated)
-            
+
+            InternalHandler.login = login
+            InternalHandler.password = password
+            response = await self.__manager.send_action_and_wait(login_cmd)
+
+            await InternalHandler.asterisk_authenticated(response)
+
             return self.__manager
 
         except socket.gaierror as ge:
@@ -72,12 +82,11 @@ class Client(asyncio.Protocol):
 
     
     def data_received(self, data: bytes) -> None:
-        print("Data received...")
         response = data.decode()
         print(response)
 
         if "ActionID" in response:
-            asyncio.create_task(self.__manager._dispatch_action(response))
+            asyncio.run_coroutine_threadsafe(self.__manager._dispatch_action(response), self.loop)
 
 
     def connection_lost(self, exc: Exception | None) -> None:

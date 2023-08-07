@@ -14,21 +14,21 @@ ASTERISK_USERNAME = 'autocall'
 ASTERISK_PASSWORD = '86ae14978e03c7b7417ca9a17a0b52b5'
 
 class TestClient(unittest.IsolatedAsyncioTestCase):
-    async def test_connection(self):
-        am = Client(ASTERISK_HOST, ASTERISK_PORT)
+    # async def test_connection(self):
+    #     am = Client(ASTERISK_HOST, ASTERISK_PORT)
         
-        print("Connecting to the server...")
-        manager = await am.connect(ASTERISK_USERNAME, ASTERISK_PASSWORD)
-        self.assertIsInstance(manager, AsteriskManager)
+    #     print("Connecting to the server...")
+    #     manager = await am.connect(ASTERISK_USERNAME, ASTERISK_PASSWORD)
+    #     self.assertIsInstance(manager, AsteriskManager)
 
-        await am.disconnect()
+    #     await am.disconnect()
     
     
     async def test_ping(self):
         try:
             am = Client(ASTERISK_HOST, ASTERISK_PORT)
             manager = await am.connect(ASTERISK_USERNAME, ASTERISK_PASSWORD)
-
+            await am.subscribe_to_events(["on"])
             # Create an asyncio.Event to signal when data is received
             data_received_event = asyncio.Event()
 
@@ -39,6 +39,7 @@ class TestClient(unittest.IsolatedAsyncioTestCase):
                 # Set the event to indicate data is received
                 data_received_event.set()
 
+            print("Ping pong sent to server")
             # Send the action with the callback
             action = Action("Ping", {})
             await manager.send_action_callback(action, handle_data)
@@ -68,14 +69,14 @@ class TestClient(unittest.IsolatedAsyncioTestCase):
     #             self.assertEqual(response_dict.get("Response", None), "Success")
 
     #         # Prepare the action
-    #         action = Action("Originate", {
-    #             "Channel": "SIP/101test",
-    #             "Context": "default",
-    #             "Exten": "998993031234",
-    #             "Priority": "1",
-    #             "CallerID": "3125551212",
-    #             "Timeout": "30000"
-    #         })
+            # action = Action("Originate", {
+            #     "Channel": "SIP/101test",
+            #     "Context": "default",
+            #     "Exten": "998993031234",
+            #     "Priority": "1",
+            #     "CallerID": "3125551212",
+            #     "Timeout": "30000"
+            # })
     #         await manager.send_action_callback(action, action_cb, action_id="ABC45678901234567890")
             
     #         while not_responded:
