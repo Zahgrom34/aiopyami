@@ -95,7 +95,7 @@ class AsteriskManager:
         if action_id + '_timeout_task' in self._action_callbacks:
             del self._action_callbacks[action_id + '_timeout_task']
 
-    async def _dispatch_action(self, response: str):
+    def _dispatch_action(self, response: str):
         """Dispatches all data related to actions that has been received from the server"""
         event_data = dump_data(response)
         action_id = event_data.get("ActionID")
@@ -112,7 +112,7 @@ class AsteriskManager:
                 self._action_callbacks[action_id + '_timeout_task'].cancel()
                 del self._action_callbacks[action_id + '_timeout_task']
 
-            await callback(event_data)
+            asyncio.run_coroutine_threadsafe(callback(event_data), self.__client.loop)
 
         # Checks for send_action_and_wait actions
         if action_id in self._action_queue:

@@ -85,7 +85,7 @@ class Client(asyncio.Protocol):
         response = data.decode()
 
         if "ActionID" in response:
-            asyncio.run_coroutine_threadsafe(self.__manager._dispatch_action(response), self.loop)
+            self.__manager._dispatch_action(response)
 
 
     def connection_lost(self, exc: Exception | None) -> None:
