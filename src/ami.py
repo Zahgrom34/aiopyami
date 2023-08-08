@@ -1,7 +1,7 @@
 import asyncio
 import uuid
-
 from typing import Callable, Optional
+
 from src.exceptions import NoConnectionMade
 from src.formats import Action, AsteriskResponse
 from src.utils import dump_data
@@ -27,6 +27,8 @@ class AsteriskManager:
             timeout (float): Estimated timeout in milliseconds to wait AMI to respond
             action_id (Optional[str]): ActionID for this transaction. Defaults to None.
             raise_on_timeout (bool): Whether to raise an exception if the action response time takes longer than estimated timeout.
+        
+        NOTE: This method is coroutine. Please use it with await prefix and inside asynchronous method
         """
         response_id = await self.send_action(action, action_id)
 
@@ -51,6 +53,8 @@ class AsteriskManager:
             action (Action): Action model to send and parameters should be in dict format
             callback (Callable[[str], None]): Function which will be called when response will be received.
             action_id (Optional[str]): ActionID for this transaction. Defaults to None.
+        
+        NOTE: This method is coroutine. Please use it with await prefix and inside asynchronous method
         """
         response_id = await self.send_action(action, action_id)
 
@@ -72,6 +76,8 @@ class AsteriskManager:
 
         Returns:
             dict: Serialized response format. From string into dictionary.
+        
+        NOTE: This method is coroutine. Please use it with await prefix and inside asynchronous method
         """
         if self.__client.transport is None or self.__client.transport.is_closing():
             raise NoConnectionMade(

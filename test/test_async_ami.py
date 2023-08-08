@@ -1,8 +1,9 @@
 import asyncio
 import unittest
+from src.ami import AsteriskManager
 
 from src.client import Client
-from src.formats import Action
+from src.formats import Action, AsteriskResponse
 
 # Connection credentials
 ASTERISK_HOST = '172.16.35.254'
@@ -11,14 +12,13 @@ ASTERISK_USERNAME = 'autocall'
 ASTERISK_PASSWORD = '86ae14978e03c7b7417ca9a17a0b52b5'
 
 class TestClient(unittest.IsolatedAsyncioTestCase):
-    # async def test_connection(self):
-    #     am = Client(ASTERISK_HOST, ASTERISK_PORT)
+    async def test_connection(self):
+        am = Client(ASTERISK_HOST, ASTERISK_PORT)
         
-    #     print("Connecting to the server...")
-    #     manager = await am.connect(ASTERISK_USERNAME, ASTERISK_PASSWORD)
-    #     self.assertIsInstance(manager, AsteriskManager)
+        manager = await am.connect(ASTERISK_USERNAME, ASTERISK_PASSWORD)
+        self.assertIsInstance(manager, AsteriskManager)
 
-    #     await am.disconnect()
+        await am.disconnect()
     
     
     async def test_ping(self):
@@ -26,23 +26,13 @@ class TestClient(unittest.IsolatedAsyncioTestCase):
             am = Client(ASTERISK_HOST, ASTERISK_PORT)
             manager = await am.connect(ASTERISK_USERNAME, ASTERISK_PASSWORD)
             await am.subscribe_to_events(["on"])
-            # Create an asyncio.Event to signal when data is received
-            data_received_event = asyncio.Event()
-
-            # Define a callback function to handle the received data
-            async def handle_data(response):
-                # Process the received data as needed
-                print("Received data:", response)
-                # Set the event to indicate data is received
-                data_received_event.set()
 
             print("Ping pong sent to server")
             # Send the action with the callback
             action = Action("Ping", {})
-            await manager.send_action_callback(action, handle_data)
+            response = await manager.send_action_and_wait(action)
 
-            # Wait until the data is received
-            await data_received_event.wait()
+            self.assertEqual(response["Ping"], "Pong", str(response))
 
         except KeyboardInterrupt:
             await am.disconnect()
