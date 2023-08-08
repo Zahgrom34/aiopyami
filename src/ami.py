@@ -100,8 +100,6 @@ class AsteriskManager:
         event_data = dump_data(response)
         action_id = event_data.get("ActionID")
 
-        event_data = AsteriskResponse.from_response(response)
-
         # Checks for send_action_callback actions
         callback = self._action_callbacks.get(action_id)
         if callback:
@@ -112,9 +110,11 @@ class AsteriskManager:
                 self._action_callbacks[action_id + '_timeout_task'].cancel()
                 del self._action_callbacks[action_id + '_timeout_task']
 
+            event_data = AsteriskResponse.from_response(response)
             asyncio.run_coroutine_threadsafe(callback(event_data), self.__client.loop)
 
         # Checks for send_action_and_wait actions
         if action_id in self._action_queue:
+            event_data = AsteriskResponse.from_response(response)
             self._action_queue.remove(action_id)
             self.__client.queue.put_nowait(event_data)

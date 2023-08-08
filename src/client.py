@@ -82,10 +82,12 @@ class Client(asyncio.Protocol):
 
     
     def data_received(self, data: bytes) -> None:
-        response = data.decode()
-
-        if "ActionID" in response:
-            self.__manager._dispatch_action(response)
+        received_bulk = data.decode()
+        entries = received_bulk.split("\r\n\r\n")
+        
+        for response in entries:
+            if "ActionID" in response:
+                self.__manager._dispatch_action(response)
 
 
     def connection_lost(self, exc: Exception | None) -> None:
