@@ -1,11 +1,8 @@
 import asyncio
-import time
 import unittest
-from src.ami import AsteriskManager
 
 from src.client import Client
 from src.formats import Action
-from src.exceptions import AuthenticationError
 
 # Connection credentials
 ASTERISK_HOST = '172.16.35.254'

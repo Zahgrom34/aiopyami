@@ -1,4 +1,8 @@
 from dataclasses import dataclass
+from typing import Any
+from src.exceptions import SerializationError
+
+from src.utils import dump_data, stringify_data
 
 @dataclass
 class Action:
@@ -22,3 +26,47 @@ class Action:
             params[key.strip()] = value.strip()
 
         return cls(action=action, params=params)
+    
+
+class AsteriskResponse:
+
+    def __init__(self, *args, **kwargs) -> None:
+        self._data = dict(*args, **kwargs)
+        self._response = ""
+    
+    @staticmethod
+    def from_response(response: str | dict) -> 'AsteriskResponse':
+        if type(response) is str:
+            try:
+                instance = AsteriskResponse()
+                instance._data = dump_data(response)
+                instance._response = response
+
+            except Exception as e:
+                raise SerializationError(
+                    "Failed to serialize response data: %s" % e)
+        
+        if type(response) is dict:
+            instance = AsteriskResponse()
+            instance._data = response
+            instance._response = stringify_data(response)
+        
+        return instance
+    
+    def to_dict(self):
+        return self._data
+
+    def __str__(self) -> str:
+        return self._response
+    
+    def __add__(self, other: 'AsteriskResponse'):
+        return AsteriskResponse(**{**self._data, **other._data})
+    
+    def __getitem__(self, key: object):
+        return self._data[key]
+    
+    def __setitem__(self, key: object, value: Any):
+        self._data[key] = value
+    
+    def __delitem__(self, key: object):
+        del self._data[key]

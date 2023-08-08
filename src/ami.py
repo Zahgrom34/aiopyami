@@ -2,8 +2,8 @@ import asyncio
 import uuid
 
 from typing import Callable, Optional
-from src.exceptions import NoConnectionMade, SerializationError
-from src.formats import Action
+from src.exceptions import NoConnectionMade
+from src.formats import Action, AsteriskResponse
 from src.utils import dump_data
 
 
@@ -16,7 +16,7 @@ class AsteriskManager:
     async def send_action_and_wait(self, action: Action, /,
                                    timeout: float = 30000,
                                    action_id: Optional[str] = None,
-                                   raise_on_timeout: bool = True) -> dict:
+                                   raise_on_timeout: bool = True) -> AsteriskResponse:
         """
         Same as send_action_callback, but with differences. 
         Instead of calling transaction response callback function, it will stop the event loop until it won't receive any response data
@@ -41,17 +41,9 @@ class AsteriskManager:
             if raise_on_timeout:
                 raise asyncio.TimeoutError("Timed out waiting for response")
 
-        if type(response) is str:
-            try:
-                response = dump_data(response)
-
-            except Exception as e:
-                raise SerializationError(
-                    "Failed to serialize response data: %s" % e)
-
         return response
 
-    async def send_action_callback(self, action: Action, callback: Callable[[dict], None], /, callback_timeout: float = 30000, action_id: Optional[str] = None) -> None:
+    async def send_action_callback(self, action: Action, callback: Callable[[AsteriskResponse], None], /, callback_timeout: float = 30000, action_id: Optional[str] = None) -> None:
         """
         Same as send_action but it was made for huge requests that require time to respond
 
@@ -107,6 +99,8 @@ class AsteriskManager:
         """Dispatches all data related to actions that has been received from the server"""
         event_data = dump_data(response)
         action_id = event_data.get("ActionID")
+
+        event_data = AsteriskResponse.from_response(response)
 
         # Checks for send_action_callback actions
         callback = self._action_callbacks.get(action_id)
