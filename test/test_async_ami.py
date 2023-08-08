@@ -30,7 +30,7 @@ class TestClient(unittest.IsolatedAsyncioTestCase):
             data_received_event = asyncio.Event()
 
             # Define a callback function to handle the received data
-            def handle_data(response):
+            async def handle_data(response):
                 # Process the received data as needed
                 print("Received data:", response)
                 # Set the event to indicate data is received

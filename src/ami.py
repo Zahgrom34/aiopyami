@@ -105,6 +105,7 @@ class AsteriskManager:
         # Checks for send_action_callback actions
         callback = self._action_callbacks.get(action_id)
         if callback:
+            print("Callback executed: ", callback)
             # Remove the callback once executed
             del self._action_callbacks[action_id]
             if action_id + '_timeout_task' in self._action_callbacks:

@@ -83,7 +83,6 @@ class Client(asyncio.Protocol):
     
     def data_received(self, data: bytes) -> None:
         response = data.decode()
-        print(response)
 
         if "ActionID" in response:
             asyncio.run_coroutine_threadsafe(self.__manager._dispatch_action(response), self.loop)
