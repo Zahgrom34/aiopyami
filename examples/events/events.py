@@ -1,5 +1,5 @@
 from .listener import FirstListener
-from ... import Client
+from aiopyami import Client
 from settings import LOGIN_CREDENTIALS
 
 # Alias for LOGIN_CREDENTIALS

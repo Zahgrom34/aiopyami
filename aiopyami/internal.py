@@ -1,5 +1,5 @@
-from src.exceptions import AuthenticationError
-from src.formats import AsteriskResponse
+from aiopyami.exceptions import AuthenticationError
+from aiopyami.formats import AsteriskResponse
 
 
 class InternalHandler:

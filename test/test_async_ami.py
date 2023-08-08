@@ -1,9 +1,9 @@
 import asyncio
 import unittest
-from src.ami import AsteriskManager
+from aiopyami.ami import AsteriskManager
 
-from src.client import Client
-from src.formats import Action, AsteriskResponse
+from aiopyami.client import Client
+from aiopyami.formats import Action, AsteriskResponse
 
 # Connection credentials
 ASTERISK_HOST = '172.16.35.254'
@@ -27,7 +27,7 @@ class TestClient(unittest.IsolatedAsyncioTestCase):
             manager = await am.connect(ASTERISK_USERNAME, ASTERISK_PASSWORD)
             await am.subscribe_to_events(["on"])
 
-            print("Ping pong sent to server")
+            print("Let's start playing ping pong with the server...")
             # Send the action with the callback
             action = Action("Ping", {})
             response = await manager.send_action_and_wait(action)

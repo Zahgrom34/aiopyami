@@ -5,7 +5,7 @@ In this example, we send an action to the server and thats it.
 In this example, we will not wait for the server to respond, we will get only given ActionID or generated one
 """
 import asyncio
-from src.client import Client, Action
+from aiopyami.client import Client, Action
 from settings import LOGIN_CREDENTIALS
 
 # Alias for LOGIN_CREDENTIALS

@@ -2,9 +2,9 @@ import asyncio
 import uuid
 from typing import Callable, Optional
 
-from src.exceptions import NoConnectionMade
-from src.formats import Action, AsteriskResponse
-from src.utils import dump_data
+from aiopyami.exceptions import NoConnectionMade
+from aiopyami.formats import Action, AsteriskResponse
+from aiopyami.utils import dump_data
 
 
 class AsteriskManager:

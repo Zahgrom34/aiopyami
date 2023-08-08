@@ -1,4 +1,4 @@
-from ... import EventHandler, AsteriskManager, AsteriskResponse, EventTrigger, Action
+from aiopyami import EventHandler, AsteriskManager, AsteriskResponse, EventTrigger, Action
 
 # Let's create our event listener class first
 class FirstListener(EventHandler):
