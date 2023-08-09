@@ -6,10 +6,10 @@ from src.client import Client
 from src.formats import Action, AsteriskResponse
 
 # Connection credentials
-ASTERISK_HOST = '172.16.35.254'
-ASTERISK_PORT = 5038
-ASTERISK_USERNAME = 'autocall'
-ASTERISK_PASSWORD = '86ae14978e03c7b7417ca9a17a0b52b5'
+ASTERISK_HOST = 'localhost'
+ASTERISK_PORT = 8080
+ASTERISK_USERNAME = 'admin'
+ASTERISK_PASSWORD = 'password'
 
 class TestClient(unittest.IsolatedAsyncioTestCase):
     async def test_connection(self):
