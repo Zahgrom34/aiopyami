@@ -2,13 +2,13 @@ import unittest
 from aiopyami.ami import AsteriskManager
 
 from aiopyami.client import Client
-from aiopyami.formats import Action, AsteriskResponse
+from aiopyami.formats import Action
 
 # Connection credentials
 ASTERISK_HOST = 'localhost'
 ASTERISK_PORT = 8080
-ASTERISK_USERNAME = 'username'
-ASTERISK_PASSWORD = 'secret'
+ASTERISK_USERNAME = 'admin'
+ASTERISK_PASSWORD = 'password'
 
 class TestClient(unittest.IsolatedAsyncioTestCase):
     async def test_connection(self):
