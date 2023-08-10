@@ -1,8 +1,8 @@
 from dataclasses import dataclass
 from typing import Any
-from src.exceptions import SerializationError
+from aiopyami.exceptions import SerializationError
 
-from src.utils import dump_data, stringify_data
+from aiopyami.utils import dump_data, stringify_data
 
 @dataclass
 class Action:

@@ -3,13 +3,13 @@ import asyncio
 
 from typing import TYPE_CHECKING, Any, Callable, Dict, List, Text
 
-from src.formats import AsteriskResponse
-from src.utils import dump_data
+from aiopyami.formats import AsteriskResponse
+from aiopyami.utils import dump_data
 
 # Type annotations
 if TYPE_CHECKING:
-    from src.ami import AsteriskManager
-    from src.client import Client
+    from aiopyami.ami import AsteriskManager
+    from aiopyami.client import Client
 
 
 class EventManager:

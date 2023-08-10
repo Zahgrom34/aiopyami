@@ -3,10 +3,10 @@ import socket
 from asyncio import Transport
 from typing import List, Text, Type, TypeVar
 
-from src.ami import AsteriskManager
-from src.events import EventHandler, EventManager
-from src.formats import Action
-from src.internal import InternalHandler
+from aiopyami.ami import AsteriskManager
+from aiopyami.events import EventHandler, EventManager
+from aiopyami.formats import Action
+from aiopyami.internal import InternalHandler
 
 T = TypeVar("T", bound="EventHandler")
 
