@@ -12,6 +12,8 @@ class AsteriskManager:
         self.__client = _client
         self._action_callbacks = {}
         self._action_queue = []
+        self._actions_queue_event = asyncio.Event()
+        self._action_callbacks_event = asyncio.Event()
 
     async def send_action_and_wait(self, action: Action, /,
                                    timeout: float = 30000,
@@ -116,6 +118,9 @@ class AsteriskManager:
                 self._action_callbacks[action_id + '_timeout_task'].cancel()
                 del self._action_callbacks[action_id + '_timeout_task']
 
+            if not len(self._action_callbacks.items()):
+                self._action_callbacks_event.set()
+
             event_data = AsteriskResponse.from_response(response)
             asyncio.run_coroutine_threadsafe(callback(event_data), self.__client.loop)
 
@@ -124,3 +129,15 @@ class AsteriskManager:
             event_data = AsteriskResponse.from_response(response)
             self._action_queue.remove(action_id)
             self.__client.queue.put_nowait(event_data)
+
+            if not len(self._action_queue):
+                self._actions_queue_event.set()
+    
+
+    async def wait_for_actions_complete(self) -> None:
+        """
+        Waits for all actions to be completed
+        If  this function will be called inside coroutine, it will freeze that coroutine, until all actions won't be completed
+        """
+        await self._actions_queue_event.wait()
+        await self._action_callbacks_event.wait()

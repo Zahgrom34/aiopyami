@@ -144,6 +144,14 @@ class Client(asyncio.Protocol):
         
         NOTE: This method is coroutine. Please use it with await prefix and inside asynchronous method
         """
+        # Check if queue is empty
+        if not self.queue.empty():
+            # Wait for queue to be empty
+            await self.queue.join()
+        
+        # Here we should add wait_for_actions_complete
+        await self.__manager.wait_for_actions_complete()
+
         logoff_cmd = Action("Logoff", {})
         await self.__manager.send_action(logoff_cmd)
         self.transport.close()
