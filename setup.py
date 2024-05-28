@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="aiopyami",
-    version="0.1.3",
+    version="0.1.4",
     author="Zahcoder34",
     author_email="Zakhriw@gmail.com",
     description="An asynchronous Asterisk AMI Client for Python",

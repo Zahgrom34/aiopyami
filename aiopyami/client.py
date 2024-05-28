@@ -152,6 +152,9 @@ class Client(asyncio.Protocol):
         # Here we should add wait_for_actions_complete
         await self.__manager.wait_for_actions_complete()
 
+        # Here we should reset the actions events to wait for them in next connection
+        self.__manager.reset_events()
+
         logoff_cmd = Action("Logoff", {})
         await self.__manager.send_action(logoff_cmd)
         self.transport.close()

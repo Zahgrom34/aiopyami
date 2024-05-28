@@ -133,6 +133,12 @@ class AsteriskManager:
             if not len(self._action_queue):
                 self._actions_queue_event.set()
     
+    def reset_events(self):
+        """
+        Resets the events to make them reusable.
+        """
+        self._actions_queue_event.clear()
+        self._action_callbacks_event.clear()
 
     async def wait_for_actions_complete(self) -> None:
         """
