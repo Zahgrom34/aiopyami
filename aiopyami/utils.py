@@ -3,8 +3,13 @@ def dump_data(data: str):
 
     dictionary = {}
     for line in lines:
-        key, value = line.split(":", 1)
-        dictionary[key.strip()] = value.strip()
+        # Check if the line contains a colon
+        if ":" in line:
+            key, value = line.split(":", 1)
+            dictionary[key.strip()] = value.strip()
+        else:
+            # Handle lines without a colon (e.g., standalone messages)
+            dictionary[line.strip()] = None
 
     return dictionary
 
